@@ -23,7 +23,11 @@ public class GameManager : MonoBehaviour
     public int lives; //lives for player
     public Text scoreText; //reference to score text
     public Text livesText; //reference to lives text
-    
+
+    public Controller[] allPlayers = FindObjectsOfType<Controller>(); //list of all controllers
+    public Controller[] humanPlayers = FindObjectsOfType<PlayerController>(); //list of all player controllers
+    public Controller[] aiPlayers = FindObjectsOfType<AIController>(); //list of all ai controllers
+
     // Start is called before the first frame update
     void Start()
     {
