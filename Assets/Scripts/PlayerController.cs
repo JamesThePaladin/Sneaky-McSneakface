@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class PlayerController : Controller
 {
-    
+    Vector2 movement; //to hold input values
+
     // Start is called before the first frame update
     void Start()
     {
@@ -14,8 +15,8 @@ public class PlayerController : Controller
     // Update is called once per frame
     void Update()
     {
-        Input.GetAxis("Horizontal");
-        Input.GetAxis("Vertical");
+        movement.x = Input.GetAxis("Horizontal");
+        movement.y = Input.GetAxis("Vertical");
     }
 
     //when destroyed
