@@ -14,22 +14,15 @@ public class GameManager : MonoBehaviour
     private GameObject player; //variable for player
     private NoiseMaker noise; //variable for player volume
     private Transform playerTf; //variable for player's transform
-    public float volumeLoss; //volume lost for distance
 
-    public float fieldOfView; //for Ai field of view
-    public float alertLevel; //for enemy volume alert threshold
 
     public int score; //public player score for testing
     public int lives; //lives for player
     public Text scoreText; //reference to score text
     public Text livesText; //reference to lives text
 
-    public Controller[] allPlayers = FindObjectsOfType<Controller>(); //list of all controllers
-    public Controller[] humanPlayers = FindObjectsOfType<PlayerController>(); //list of all player controllers
-    public Controller[] aiPlayers = FindObjectsOfType<AIController>(); //list of all ai controllers
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
         if (instance == null) // if instance is empty
         {
@@ -41,7 +34,10 @@ public class GameManager : MonoBehaviour
             Destroy(this.gameObject); // delete the new game manager attempting to store itself, there can only be one.
             Debug.Log("Warning: A second game manager was detected and destrtoyed"); // display message in the console to inform of its demise
         }
-
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
         if (player == null) //if player slot is empty
         {
             player = GameObject.FindWithTag("Player"); //fill it with player
@@ -51,6 +47,9 @@ public class GameManager : MonoBehaviour
         score = 0; //initialize score
         scoreText.text = "" + score;//update score text in UI
         livesText.text = "Lives: " + lives;//update lives in UI
+        Controller[] allPlayers = FindObjectsOfType<Controller>(); //list of all controllers
+        Controller[] humanPlayers = FindObjectsOfType<PlayerController>(); //list of all player controllers
+        Controller[] aiPlayers = FindObjectsOfType<AIController>(); //list of all ai controllers
     }
 
     // Update is called once per frame
@@ -65,60 +64,5 @@ public class GameManager : MonoBehaviour
         score += addPoints; //add points to player score
         scoreText.text = "" + score;//update score text in UI
     }
-
-    //bool for AI hearing
-    public bool CanHear(GameObject player)
-    {
-        //if player has no Noise Maker
-        if (noise == null)
-        {
-            return false;
-        }
-        //otherwise
-        else
-        {
-            //adjust for distance loss
-            float newVolume = noise.volume - volumeLoss;
-            //if new volume is greater than the alert threshold
-            if (newVolume > alertLevel)
-            {
-                //return true
-                return true;
-            }
-            //if not
-            else 
-            {
-                //return false
-                return false;
-            }
-        }
-    }
-
-    //bool for FOV
-    public bool CanSee(GameObject player)
-    {
-        //get the player's transform
-        playerTf = player.GetComponent<Transform>();
-        // Find the vector from the agent to the target
-        Vector3 agentToPlayerVector = playerTf.position - GetComponent<Transform>().position;
-
-        // Find the angle between the direction our agent is facing (forward in local space) and the vector to the target.
-        float angleToPlayer = Vector3.Angle(agentToPlayerVector, transform.forward);
-        // if that angle is less than our field of view
-        if (angleToPlayer < fieldOfView)
-        {
-            // Raycast
-            RaycastHit2D hitInfo = Physics2D.Raycast(transform.position, agentToPlayerVector);
-
-            //if the first object hit is the player
-            if (hitInfo.collider.gameObject == player) 
-            {
-                //return true
-                return true;
-            }
-        }
-        //this will only run if nothing is hit or if something is hit that isnt the player
-        return true;
-    }  
 }
 

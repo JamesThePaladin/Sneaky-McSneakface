@@ -4,15 +4,23 @@ using UnityEngine;
 
 public class PlayerController : Controller
 {
+    
     // Start is called before the first frame update
     void Start()
     {
-        GameManager.instance.humanPlayers.Add(this.gameObject);
+        //GameManager.instance.humanPlayers.Add(this.gameObject);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        Input.GetAxis("Horizontal");
+        Input.GetAxis("Vertical");
+    }
+
+    //when destroyed
+    void OnDestroy()
+    {
+        //GameManager.instance.humanPlayers.Remove(this.gameObject);
     }
 }

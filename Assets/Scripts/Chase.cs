@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : AIController
+public class Chase : AIController
 {
     [SerializeField]
     public Pawn thisEnemy; //for this enemy object
-    private GameObject target; //for player object
+    public GameObject target; //for player object
     private Transform targetTf; //for player transform
+    public float stopDistance; //variable for enemy stopping distance
 
     // Start is called before the first frame update
     void Start()
@@ -32,6 +33,11 @@ public class Enemy : AIController
             target = GameObject.FindWithTag("Player");
             //get target transform
             targetTf = target.GetComponent<Transform>();
+        }
+        if (Vector2.Distance(transform.position, targetTf.position) > stopDistance)
+        {
+            //move towards player at a rate of speed * the amount of time since the last frame draw
+            transform.position = Vector2.MoveTowards(transform.position, targetTf.position, pawn.speed * Time.deltaTime);
         }
     }
 }
