@@ -2,7 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Controller : MonoBehaviour
+public abstract class Controller : MonoBehaviour
 {
-    public Pawn pawn;
+    protected Pawn pawn;
+
+
+    protected virtual void Start()
+    {
+        pawn = GetComponent<Pawn>(); 
+    }
 }

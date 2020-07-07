@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     float timer; //timer for spawning
     public float waitTime; //wait time for spawning 
 
-    private GameObject player; //variable for player
+    public GameObject player; //variable for player
     private NoiseMaker noise; //variable for player volume
     private Transform playerTf; //variable for player's transform
 

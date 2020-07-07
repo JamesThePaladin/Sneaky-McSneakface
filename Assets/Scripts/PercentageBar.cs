@@ -6,23 +6,29 @@ using UnityEngine.UI;
 
 public class PercentageBar : MonoBehaviour
 {
-    public float max; //Public variable for max
-    public float current; //Public variable for current
-    public Image guiBar;//Public variable for our image component
 
-    // Use this for initialization
-    void Start()
-    {
-        //Make sure the image component is set to filled
-        guiBar.type = Image.Type.Filled;
-    }
+    //public Slider slider; //to hold the health bar's slider
+    //public Color low; //for low resource color
+    //public Color high; //for high resource color
+    //public Vector3 offset; //for pawn height
 
-    // Update is called once per frame
-    void Update()
-    {
-        //Find what percentage of max our current value is
-        float percentOfMax = current / max;
-        //Set our image percentage to that same percent
-        guiBar.fillAmount = percentOfMax;
-    }
+    //public void SetHealth(float hp, float maxHp) 
+    //{
+    //    //activate game object when health is below max health
+    //    slider.gameObject.SetActive(hp == maxHp);
+    //    //set slider value equal to health
+    //    slider.value = hp;
+    //    //set max slider value to max health
+    //    slider.maxValue = maxHp;
+    //    //set the slider to change color as it lowers by getting this component off the child
+    //    slider.fillRect.GetComponentInChildren<Image>().color = Color.Lerp(low, high, slider.normalizedValue);
+    //}
+
+
+    //// Update is called once per frame
+    //void Update()
+    //{
+    //    //transforms the position from a 3D world positon to a 2D screen point
+    //    //slider.transform.position = Camera.main.WorldToScreenPoint(transform.parent.position + offset);
+    //}
 }
