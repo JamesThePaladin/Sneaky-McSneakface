@@ -25,11 +25,13 @@ public class Pawn : MonoBehaviour
         hp = maxHp;
     }
 
-    public virtual void Attack()
-    {
-        Debug.Log("This is the parent Attack.");
-    }
-
+    //***************************************************
+    //REMINDER
+    //Check out movement to use more-fun tilesets
+    //Kenny is awesome for the free stuff but I am not in love with the feel of this kind of top down
+    //and the project is hard enough to look at anyway with the time crunch
+    //try to get your chicken sprites to work if you finish everything
+    //*****************************************************
     public void Move(float direction)
     {
         //create a new vector 3 equal to pawn position
