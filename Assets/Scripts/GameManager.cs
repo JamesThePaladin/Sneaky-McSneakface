@@ -60,7 +60,11 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (player == null) //if player slot is empty
+        {
+            player = GameObject.FindWithTag("Player"); //fill it with player
+            noise = player.GetComponent<NoiseMaker>(); //get player's noise maker
+        }
     }
 
     //takes in points from other objects and adds it to the player's score

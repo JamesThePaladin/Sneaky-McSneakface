@@ -12,8 +12,7 @@ public class AIController : Controller
     public float volumeLoss; //volume lost for distance
     public float fieldOfView; //for Ai field of view
     public float alertLevel; //for enemy volume alert threshold
-    public float attackRange; //for attack range
-    public float chaseRange; //for chase range
+
 
     public List<Transform> waypoints; //waypoint transforms
     public int patrolIndex; //current patrol waypoint index
@@ -48,9 +47,20 @@ public class AIController : Controller
                 break;
             case State.Chase:
                 Chase();
+                Debug.Log("Chasing!");
+                if (Vector2.Distance(transform.position, playerTf.position) <= pawn.attackRange)
+                {
+                    Debug.Log("Attacking!");
+                    ChangeState(State.Attack);
+                }
+                else if (Vector2.Distance(transform.position, playerTf.position) > pawn.chaseRange)
+                {
+                    Debug.Log("I lost it");
+                    ChangeState(State.Patrol);
+                }
                 break;
             case State.Attack:
-                //TODO make Attack State
+                pawn.Attack();
                 break;
         }
     }
@@ -69,12 +79,11 @@ public class AIController : Controller
     {
         // Change our currentState
         currentState = newState;
-        Debug.Log("changing states!");
     }
 
     public void DoIdle()
     {
-        RestTime();
+        //Do Nothing
     }
 
     //method for patrol state
@@ -113,7 +122,6 @@ public class AIController : Controller
             {
                 //to check if its working
                 Debug.Log("I can hear you!");
-                pawn.LookTowards();
                 //look at player
                 pawn.LookTowards();
                 //check to see if player can be seen
@@ -153,17 +161,9 @@ public class AIController : Controller
         {
             //move towards player at a rate of speed * the amount of time since the last frame draw
             pawn.transform.position = Vector2.MoveTowards(pawn.transform.position, playerTf.position, pawn.speed * Time.deltaTime);
+            //look at player
+            pawn.transform.LookAt(playerTf, Vector3.up);
         }
-
-        //else if (Vector2.Distance(transform.position, playerTf.position) <= attackRange)
-        //{
-        //    ChangeState(State.Attack);
-        //}
-
-        //else if (Vector2.Distance(transform.position, playerTf.position) > chaseRange)
-        //{
-        //    ChangeState(State.Idle);
-        //}
     }
 
     //bool for AI hearing
@@ -180,7 +180,7 @@ public class AIController : Controller
             //if new volume is greater than the alert threshold
             if (playerNoise.volume > alertLevel)
             {
-                //return true
+                
                 return true;
             }
             //if not
@@ -192,9 +192,30 @@ public class AIController : Controller
         }
     }
 
-    IEnumerator RestTime() 
+    public bool CanSee(GameObject target)
     {
-        ChangeState(State.Patrol);
-        yield return new WaitForSeconds(3f);
+        // We use the location of our target in a number of calculations - store it in a variable for easy access.
+
+        // Find the vector from the agent to the target
+        // We do this by subtracting "destination minus origin", so that "origin plus vector equals destination."
+        Vector3 agentToTargetVector = playerTf.position - pawn.transform.position;
+
+        // Find the angle between the direction our agent is facing (forward in local space) and the vector to the target.
+        float angleToPlayer = Vector3.Angle(agentToTargetVector, pawn.transform.forward);
+
+        // if that angle is less than our field of view
+        if (angleToPlayer < fieldOfView)
+        {
+            // Raycast
+            RaycastHit2D hitInfo = Physics2D.Raycast(pawn.transform.position, agentToTargetVector);
+
+            // If the first object we hit is our target 
+            if (hitInfo.collider.gameObject == target)
+            {
+                // return true 
+                return true;
+            }
+        }
+        return false;
     }
 }

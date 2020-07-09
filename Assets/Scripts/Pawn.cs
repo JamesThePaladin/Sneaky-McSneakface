@@ -6,15 +6,16 @@ public class Pawn : MonoBehaviour
 {
     public GameObject thisPawn; //to hold this pawn object
     private Transform tf; //hold pawn tf
+    public Transform attackPoint; //the transform of attack point empty
     public float speed; //movement speed
     public float rotateSpeed; //for pawn rotation
-
+    public float attackRange; //for attack range
     public float hp; //to hold the pawn's helf value
     public float maxHp; //to hold the max health a pawn has
 
     [Header("AI Stuff")]
     public Transform targetTf; //AI look towards lock
-
+    public float chaseRange; //for chase range
     public float closeEnough; //close enough distance to waypoint
 
     void Start()
@@ -25,13 +26,6 @@ public class Pawn : MonoBehaviour
         hp = maxHp;
     }
 
-    //***************************************************
-    //REMINDER
-    //Check out movement to use more-fun tilesets
-    //Kenny is awesome for the free stuff but I am not in love with the feel of this kind of top down
-    //and the project is hard enough to look at anyway with the time crunch
-    //try to get your chicken sprites to work if you finish everything
-    //*****************************************************
     public void Move(float direction)
     {
         //create a new vector 3 equal to pawn position
@@ -63,7 +57,26 @@ public class Pawn : MonoBehaviour
         //rotate to look at target
         transform.right = targetLock;
     }
+    public void Attack() 
+    {
+        //Detect all enemies in range of attack
+        Collider2D[] hits = Physics2D.OverlapCircleAll(attackPoint.position, attackRange);
+        //damage them
+        foreach (Collider2D entities in hits) 
+        {
+            
+        }
+    }
 
+    //to show attack range visually
+    private void OnDrawGizmosSelected()
+    {
+        //check if there is an attack point
+        if (attackPoint == null)
+            return;
+        //draw a wire sphere with unity's gizmo at the attackPoint's position, with a radius of attack range
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    }
     public void Death() 
     {
         //if hp is equal to or less than zero

@@ -18,5 +18,10 @@ public class PlayerController : Controller
         pawn.Move(vertical);
         //send horizontal to pawn rotate function
         pawn.Rotate(horizontal);
+
+        if (Input.GetKeyDown(KeyCode.Space)) 
+        {
+            pawn.Attack();
+        }
     }
 }
