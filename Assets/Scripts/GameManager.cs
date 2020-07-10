@@ -21,11 +21,12 @@ public class GameManager : MonoBehaviour
     public Text scoreText; //reference to score text
     public Text livesText; //reference to lives text
 
-    //************************************************************
 
-    //TODO add GameManager states for start screen and play screen.
-
-    //************************************************************
+    public enum GameStates 
+    {
+        MainMenu,
+        Game
+    }
 
     private void Awake()
     {

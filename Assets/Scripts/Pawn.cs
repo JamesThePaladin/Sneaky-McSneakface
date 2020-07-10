@@ -12,11 +12,15 @@ public class Pawn : MonoBehaviour
     public float attackRange; //for attack range
     public float hp; //to hold the pawn's helf value
     public float maxHp; //to hold the max health a pawn has
+    public float damage;
+    public float noiseDistance;
 
     [Header("AI Stuff")]
     public Transform targetTf; //AI look towards lock
     public float chaseRange; //for chase range
     public float closeEnough; //close enough distance to waypoint
+    public float viewRadius; 
+    public float fieldOfView; //for Ai field of view
 
     void Start()
     {
@@ -64,7 +68,7 @@ public class Pawn : MonoBehaviour
         //damage them
         foreach (Collider2D entities in hits) 
         {
-            
+            Debug.Log("HIT");
         }
     }
 
@@ -85,6 +89,15 @@ public class Pawn : MonoBehaviour
             //die
             Destroy(gameObject);
         }
+    }
+
+    public Vector3 AngleToTarget(float angleInDegrees, bool angleIsGlobal)
+    {
+        if (!angleIsGlobal)
+        {
+            angleInDegrees += transform.eulerAngles.y;
+        }
+        return new Vector3(Mathf.Sin(angleInDegrees * Mathf.Deg2Rad), Mathf.Cos(angleInDegrees * Mathf.Deg2Rad), 0);
     }
 }
     

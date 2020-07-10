@@ -1058,7 +1058,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1429103954}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.84, y: -1.02, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1077,10 +1077,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pawn: {fileID: 1167467472}
-  stopDistance: 1
+  stopDistance: 0.5
   volumeLoss: 0.4
-  fieldOfView: 45
   alertLevel: 1
+  hearingDistance: 0
   waypoints:
   - {fileID: 1545336191}
   - {fileID: 1671277405}
@@ -3109,12 +3109,12 @@ PrefabInstance:
     - target: {fileID: 1887584245246348726, guid: 7d680b139cedee7419fa456c85020e53,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 6.61
+      value: 7.41
       objectReference: {fileID: 0}
     - target: {fileID: 1887584245246348726, guid: 7d680b139cedee7419fa456c85020e53,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.46
+      value: 2.28
       objectReference: {fileID: 0}
     - target: {fileID: 1887584245246348726, guid: 7d680b139cedee7419fa456c85020e53,
         type: 3}
@@ -3172,6 +3172,11 @@ PrefabInstance:
       propertyPath: m_SpriteTilingProperty.oldSize.x
       value: 0.35
       objectReference: {fileID: 0}
+    - target: {fileID: 1887584245246348731, guid: 7d680b139cedee7419fa456c85020e53,
+        type: 3}
+      propertyPath: volume
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7d680b139cedee7419fa456c85020e53, type: 3}
 --- !u!1001 &6109111741115813976
@@ -3198,6 +3203,21 @@ PrefabInstance:
         type: 3}
       propertyPath: attackRange
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6109111740001579912, guid: 5fd3d77f739e1544bb9a8c05f209fd4b,
+        type: 3}
+      propertyPath: chaseRange
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6109111740001579912, guid: 5fd3d77f739e1544bb9a8c05f209fd4b,
+        type: 3}
+      propertyPath: viewRadius
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6109111740001579912, guid: 5fd3d77f739e1544bb9a8c05f209fd4b,
+        type: 3}
+      propertyPath: fieldOfView
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 6109111740001579914, guid: 5fd3d77f739e1544bb9a8c05f209fd4b,
         type: 3}
@@ -3259,5 +3279,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: AI Agent
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6109111740001579916, guid: 5fd3d77f739e1544bb9a8c05f209fd4b, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 5fd3d77f739e1544bb9a8c05f209fd4b, type: 3}

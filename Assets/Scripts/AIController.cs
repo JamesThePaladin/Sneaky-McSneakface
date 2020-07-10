@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,14 +7,12 @@ public class AIController : Controller
 {
 
     private NoiseMaker playerNoise; //variable for player noise maker component
-    private Transform playerTf; //variable for player's transform
     public float stopDistance; //variable for enemy stopping distance
 
     public float volumeLoss; //volume lost for distance
-    public float fieldOfView; //for Ai field of view
     public float alertLevel; //for enemy volume alert threshold
-
-
+    public float hearingDistance; //how far pawn can hear
+    
     public List<Transform> waypoints; //waypoint transforms
     public int patrolIndex; //current patrol waypoint index
 
@@ -37,6 +36,11 @@ public class AIController : Controller
     // Update is called once per frame
     void Update()
     {
+        //******************************
+        //TODO fix statement or functions causing issues. Might be related to attack and chase ranges.
+        //DO NOT FORGET you also have a GameManager FSM you have to make to handle the menu screens or something
+        //******************************
+
         switch (currentState)
         {
             case State.Idle:
@@ -44,33 +48,52 @@ public class AIController : Controller
                 break;
             case State.Patrol:
                 Patrol();
+                //check to see if player can be heard
+                //if (CanHear())
+                //{
+                //    //to check if its working
+                //    Debug.Log("I can hear you!");
+                //    //look at player
+                //    pawn.LookTowards();
+                //    //check to see if player can be seen
+                //    if (CanSee(GameManager.instance.player))
+                //    {
+                //        ChangeState(State.Chase);
+                //    }
+                //}
+                //check to see if player can be seen
+                if (CanSee(GameManager.instance.player))
+                {
+                    ChangeState(State.Chase);
+                }
                 break;
             case State.Chase:
                 Chase();
-                Debug.Log("Chasing!");
-                if (Vector2.Distance(transform.position, playerTf.position) <= pawn.attackRange)
+                //check to see if we are within attack range
+                Debug.Log(Vector3.Distance(transform.position, GameManager.instance.player.transform.position));
+                Debug.Log(CanSee(GameManager.instance.player));
+                if (Vector3.Distance(transform.position, GameManager.instance.player.transform.position) < pawn.attackRange && CanSee(GameManager.instance.player))
                 {
+                    //attack
                     Debug.Log("Attacking!");
                     ChangeState(State.Attack);
                 }
-                else if (Vector2.Distance(transform.position, playerTf.position) > pawn.chaseRange)
+                //if player moves out of range
+                else if (!CanSee(GameManager.instance.player))
                 {
-                    Debug.Log("I lost it");
-                    ChangeState(State.Patrol);
+                    //go back to patrolling
+                    Debug.Log("Going to idle");
+                    ChangeState(State.Idle);
                 }
                 break;
             case State.Attack:
                 pawn.Attack();
+                if (Vector3.Distance(transform.position, GameManager.instance.player.transform.position) > pawn.attackRange) 
+                {
+                    Debug.Log("transitioning from attack to chase");
+                    ChangeState(State.Chase);
+                }
                 break;
-        }
-    }
-
-    public void FixedUpdate()
-    {
-        //get the player's transform
-        if (playerTf == null) 
-        {
-            playerTf = GameManager.instance.player.GetComponent<Transform>(); 
         }
     }
 
@@ -83,7 +106,12 @@ public class AIController : Controller
 
     public void DoIdle()
     {
-        //Do Nothing
+        StartCoroutine(Wait());
+        IEnumerator Wait() 
+        {
+            yield return new WaitForSeconds(3f);
+            ChangeState(State.Patrol);
+        }
     }
 
     //method for patrol state
@@ -116,55 +144,28 @@ public class AIController : Controller
                 //if it has reset index
                 patrolIndex = 0;
             }
-
-            //check to see if player can be heard
-            if (CanHear())
-            {
-                //to check if its working
-                Debug.Log("I can hear you!");
-                //look at player
-                pawn.LookTowards();
-                //check to see if player can be seen
-                ChangeState(State.Chase);
-            //    if (CanSee())
-            //    {
-            //        Debug.Log("I can see you!");
-            //        ChangeState(State.Chase);
-            //    }
-            //}
-            ////check to see if player can be seen
-            //if (CanSee())
-            //{
-            //    Debug.Log("I can see you!");
-            //
-                //ChangeState(State.Chase);
-
-            //TODO fix CanSee() method and stuff
-            }
         }
     }
 
     //method for chase state
     public void Chase()
     {
-        //if player is empty, because they got destroyed
-        if (GameManager.instance.player == null)
-        {
-            //fill with current player
-            GameManager.instance.player = GameObject.FindWithTag("Player");
-            //get target transform
-            playerTf = GameManager.instance.player.GetComponent<Transform>();
-        }
+        //set target to player
+        pawn.targetTf = GameManager.instance.player.transform;
 
-        //if
-        if (Vector2.Distance(pawn.transform.position, playerTf.position) > stopDistance)
+        if (Vector2.Distance(pawn.transform.position, GameManager.instance.player.transform.position) < pawn.attackRange)
         {
-            //move towards player at a rate of speed * the amount of time since the last frame draw
-            pawn.transform.position = Vector2.MoveTowards(pawn.transform.position, playerTf.position, pawn.speed * Time.deltaTime);
-            //look at player
-            pawn.transform.LookAt(playerTf, Vector3.up);
+            //move pawn by 1
+            pawn.Move(0);
+            //towards the waypoint
+            pawn.LookTowards();
         }
     }
+
+
+    //******************
+    //TODO fix this
+    //******************
 
     //bool for AI hearing
     public bool CanHear()
@@ -174,47 +175,45 @@ public class AIController : Controller
         {
             return false;
         }
-        //otherwise
-        else
+
+        if (Vector3.Distance(pawn.transform.position, GameManager.instance.player.transform.position) < hearingDistance + GameManager.instance.player.GetComponent<Pawn>().noiseDistance) 
         {
-            //if new volume is greater than the alert threshold
-            if (playerNoise.volume > alertLevel)
+            if (playerNoise.volume > alertLevel) 
             {
-                
+                Debug.Log("I can hear you");
                 return true;
-            }
-            //if not
-            else
-            {
-                //return false
-                return false;
             }
         }
+        return false;
     }
 
-    public bool CanSee(GameObject target)
+    public bool CanSee(GameObject player)
     {
-        // We use the location of our target in a number of calculations - store it in a variable for easy access.
-
         // Find the vector from the agent to the target
         // We do this by subtracting "destination minus origin", so that "origin plus vector equals destination."
-        Vector3 agentToTargetVector = playerTf.position - pawn.transform.position;
+        Vector3 agentToPlayerVector = player.transform.position - pawn.transform.position;
 
         // Find the angle between the direction our agent is facing (forward in local space) and the vector to the target.
-        float angleToPlayer = Vector3.Angle(agentToTargetVector, pawn.transform.forward);
+        float angleToPlayer = Vector3.Angle(agentToPlayerVector, pawn.transform.right);
 
         // if that angle is less than our field of view
-        if (angleToPlayer < fieldOfView)
+        if (angleToPlayer < pawn.viewRadius)
         {
-            // Raycast
-            RaycastHit2D hitInfo = Physics2D.Raycast(pawn.transform.position, agentToTargetVector);
-
-            // If the first object we hit is our target 
-            if (hitInfo.collider.gameObject == target)
+            if (Vector3.Distance(pawn.transform.position, player.transform.position) < pawn.fieldOfView / 2)
             {
-                // return true 
-                return true;
-            }
+                // Raycast
+                RaycastHit2D hitInfo = Physics2D.Raycast(pawn.transform.position, agentToPlayerVector, pawn.viewRadius);
+                // If the first object we hit is our target 
+                if (hitInfo.collider.gameObject == player)
+                {
+                    // return true 
+                    return true;
+                }
+                else 
+                {
+                    return false;
+                }
+            } 
         }
         return false;
     }
